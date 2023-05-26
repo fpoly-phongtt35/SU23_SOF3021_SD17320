@@ -1,6 +1,9 @@
 package com.example.demo.b8;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,19 +21,22 @@ public class SanPhamController {
     private ISanPhamRepository repository;
 
     @GetMapping
-    public String view(Model model,
-                       @RequestParam(required = false) String tenSanPham) {
+    public String view(Model model
+            , @RequestParam(defaultValue = "1") int page
+            , @RequestParam(required = false) String tenSanPham) {
 
-        List<SanPham> sanPhamList = new ArrayList<>();
+        Page<SanPham> pageSanPham;
 
+        if (page < 1) page = 1;
+
+        Pageable pageable = PageRequest.of(page - 1, 10);
         if (tenSanPham == null || tenSanPham.isBlank()) {
-            sanPhamList = repository.findAll();
+            pageSanPham = repository.findAll(pageable);
         } else {
-            sanPhamList = repository.findByTenSanPhamContains(tenSanPham);
+            pageSanPham = repository.findByTenSanPhamContains(tenSanPham, pageable);
         }
 
-        model.addAttribute("danhSachSanPham", sanPhamList);
-
+        model.addAttribute("page", pageSanPham);
         return "b8/product";
     }
 
