@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Map;
 
-@Controller
+@Controller("B4Controller")
 @RequestMapping("/b4/cart")
 public class GioHangController {
 
